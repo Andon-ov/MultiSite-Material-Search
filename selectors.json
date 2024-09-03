@@ -1,0 +1,18 @@
+{
+    "toplivo": {
+        "parent_selector": ".productWapper1.search",
+        "title_selector": "div.productWapper1 > div:nth-child(1) > div:nth-child(2) > h3:nth-child(2) > a:nth-child(1) > span:nth-child(2)",
+        "second_title_selector": ".ime",
+        "link_selector": "div.productWapper1 > div:nth-child(1) > figure:nth-child(1) > a:nth-child(1)",
+        "price_selector": ".cena .beforedot",
+        "price_currency_selector": ".cena .edmiarka"
+    },
+    "abc": {
+        "parent_selector": "._product-info",
+        "title_selector": "._product-name-tag a",
+        "link_selector": "._product-name-tag a",
+        "price_selector": "._product-price .price",
+        "new_price_selector": "._product-price-compare",
+        "old_price_selector": "._product-price-old"
+    }
+}
