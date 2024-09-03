@@ -159,6 +159,7 @@ def search_products(request):
             urls = {
                 "toplivo": f"https://toplivo.bg/rezultati-ot-tarsene/{query}",
                 "abc":f"https://stroitelni-materiali.eu/search?query={query}",
+                "bricolage": f"https://mr-bricolage.bg/search-list?query={query}",
             }
 
             for site, url in urls.items():
@@ -170,6 +171,8 @@ def search_products(request):
                         site_results = process_toplivo(soup)
                     elif site == "abc":
                         site_results = process_abc(soup)
+                    elif site == "bricolage":
+                        site_results = process_bricolage(soup)
                     else:
                         site_results = []
 
@@ -242,6 +245,31 @@ def process_abc(soup):
         link = link_tag['href'] if link_tag else '#'
         new_price = new_price_tag.get_text(strip=True) if new_price_tag else 'Няма цена'
         price = price_tag.get_text(strip=True) if price_tag else new_price
+
+        results.append({'title': title, 'price': price, 'link': link, "store_name":store_name})
+    return results
+
+
+
+def process_bricolage(soup):
+    results = []
+    store_name = "Mr.Bricolage"  # Името на магазина
+    for item in soup.select('.product'):
+        title_tag = item.select_one('.product__title a')
+        link_tag = item.select_one('.product__title a')
+        first_price_tag = item.select_one('.product__price-value')
+        second_price_tag = item.select_one('.fraction')
+
+        # new_price_tag = item.select_one('._product-price-compare')
+        # old_price_tag = item.select_one('._product-price-old')
+
+        title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
+        link = link_tag['href'] if link_tag else '#'
+
+        first_price = first_price_tag.get_text(strip=True) if first_price_tag else 'Няма цена'
+        second_price = second_price_tag.get_text(strip=True) if second_price_tag else 'Няма цена'
+
+        price = f"{first_price}.{second_price}"
 
         results.append({'title': title, 'price': price, 'link': link, "store_name":store_name})
     return results
