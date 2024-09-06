@@ -100,6 +100,9 @@ def process_toplivo(soup):
         new_price = new_price_tag.get_text(
             strip=True) if new_price_tag else None
         valid_price = price_tag.get_text(strip=True) if price_tag else None
+        
+        if red_price or new_price or valid_price:
+            valid_price = f"{valid_price} лв."
 
         # Price priority logic: checks valid_price first, then red_price, and finally new_price
         price = valid_price or red_price or new_price or 'Няма цена'
@@ -125,6 +128,7 @@ def process_abc(soup):
         new_price = new_price_tag.get_text(
             strip=True) if new_price_tag else 'Няма цена'
         price = price_tag.get_text(strip=True) if price_tag else new_price
+        price = price.replace(',', '.')
 
         results.append({'title': title, 'price': price,
                        'link': link, "store_name": store_name})
@@ -149,7 +153,7 @@ def process_bricolage(soup):
         second_price = second_price_tag.get_text(
             strip=True) if second_price_tag else 'Няма цена'
 
-        price = f"{first_price}.{second_price}"
+        price = f"{first_price}.{second_price} лв."
 
         results.append({'title': title, 'price': price,
                        'link': link, "store_name": store_name})
