@@ -1,9 +1,9 @@
-import json
 from django.shortcuts import render
 from .forms import SearchForm
 import requests
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
+import re
 
 def home(request):
     return render(request, 'material_scout/home.html')
@@ -26,6 +26,9 @@ def fetch_site(site, url):
     return []
 
 
+
+
+
 def search_products(request):
     results = []
     if 'query' in request.GET:
@@ -39,18 +42,36 @@ def search_products(request):
                 "masterhaus": f"https://www.masterhaus.bg/bg/search?q={query}",
             }
 
-            # Used on ThreadPoolExecutor for parallel requests
+            # Using ThreadPoolExecutor for parallel requests
             with ThreadPoolExecutor() as executor:
                 futures = [executor.submit(fetch_site, site, url) for site, url in urls.items()]
 
                 for future in futures:
                     try:
                         site_results = future.result()
-                        results.extend(site_results)
+
+                        # Filter the results
+                        filtered_results = filter_results_by_query(site_results, query)
+
+                        results.extend(filtered_results)
                     except Exception as e:
                         print(f"Error fetching results: {e}")
 
     return render(request, 'material_scout/search_results.html', {'form': form, 'results': results, 'query': query})
+
+def filter_results_by_query(results, query):
+    filtered_results = []
+    # A regular expression to match the word query exactly
+    query_pattern = re.compile(rf'\b{re.escape(query)}\b', re.IGNORECASE)
+
+    for result in results:
+        title = result['title']
+        
+        # If the title contains an exact query match, we add it to the results
+        if query_pattern.search(title):
+            filtered_results.append(result)
+
+    return filtered_results
 
 
 def process_toplivo(soup):
