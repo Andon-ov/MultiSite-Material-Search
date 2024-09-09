@@ -23,6 +23,8 @@ def fetch_site(site, url):
             return process_bricolage(soup)
         elif site == "masterhaus":
             return process_masterhaus(soup)
+        elif site == "praktiker":
+            return process_praktiker(soup)
     return []
 
 
@@ -40,6 +42,8 @@ def search_products(request):
                 "abc": f"https://stroitelni-materiali.eu/search?query={query}",
                 "bricolage": f"https://mr-bricolage.bg/search-list?query={query}",
                 "masterhaus": f"https://www.masterhaus.bg/bg/search?q={query}",
+                "praktiker": f"https://praktiker.bg/bg/search/{query}",
+
             }
 
             # Using ThreadPoolExecutor for parallel requests
@@ -225,4 +229,25 @@ def process_masterhaus(soup):
 
         results.append({'title': title, 'price': price, 'link': link, "store_name":store_name})
     return results
+
+def process_praktiker(soup):
+    results = []
+    store_name = "Praktiker"
+    for item in soup.select('.product-grid-box.products-grid__item'):
+        title_tag = item.select_one('.product-item__title a')
+        link_tag = item.select_one('.product-item__title a')
+        price_whole_tag = item.select_one('.price__value')
+        price_fraction_tag = item.select_one('sup')
+
+        title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
+        link = link_tag['href'] if link_tag else '#'
+        
+        # Combine the whole number and pennies for the price
+        price_whole = price_whole_tag.get_text(strip=True) if price_whole_tag else 'Няма цена'
+        price_fraction = price_fraction_tag.get_text(strip=True) if price_fraction_tag else '00'
+        price = f"{price_whole}.{price_fraction} лв.".replace(',', '.')
+
+        results.append({'title': title, 'price': price, 'link': link, "store_name": store_name})
+    return results
+
 
