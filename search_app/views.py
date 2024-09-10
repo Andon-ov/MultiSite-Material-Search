@@ -241,6 +241,8 @@ def process_praktiker(soup):
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
+        if link:
+            link = f"https://praktiker.bg/{link}"
         
         # Combine the whole number and pennies for the price
         price_whole = price_whole_tag.get_text(strip=True) if price_whole_tag else 'Няма цена'
