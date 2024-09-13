@@ -265,13 +265,18 @@
       <button type="submit">Търси</button>
     </form>
 
-    <h1>Резултати от търсене: {{ query }}</h1>
+    <h1>Резултати от търсене: {{ query }}</h1> {{results | length}}
 
     <div class="sort-buttons">
       <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>
       <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
       <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
       <a href="?query={{ query }}&sort=price_desc">Сортирай по цена низходящо</a>
+
+      <label>
+        <input type="checkbox" name="exact_match" {% if exact_match %}checked{% endif %}>
+        Точно съвпадение
+      </label>
     </div>
 
     <table>
