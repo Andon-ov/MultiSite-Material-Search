@@ -140,10 +140,13 @@ def process_toplivo(soup):
         link_tag = item.select_one('figure.img > a')
 
         price_tag = item.select_one('.cena .beforedot')
+        promo_price_tag = item.select_one('.promocena > strong')
+
         red_price_tag = item.select_one(
             ('div.productWapper1 > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)'))
         new_price_tag = item.select_one(
             ('div.productWapper1 > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > span:nth-child(1)'))
+        
 
         link = link_tag['href'] if link_tag else '#'
 
@@ -152,7 +155,9 @@ def process_toplivo(soup):
             strip=True) if red_price_tag else None
         new_price = new_price_tag.get_text(
             strip=True) if new_price_tag else None
-        valid_price = price_tag.get_text(strip=True) if price_tag else None
+        promo_price = promo_price_tag.get_text(
+            strip=True) if promo_price_tag else None
+        valid_price = price_tag.get_text(strip=True) if price_tag else promo_price
 
         if red_price or new_price or valid_price:
             valid_price = f"{valid_price} лв."

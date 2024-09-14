@@ -1,9 +1,61 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Home</title>
-</head>
-<body>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Търсене на продукти</title>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', sans-serif;
+        background-color: #f0f8ff;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      form {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        align-items: center;
+      }
+
+      form input[type="text"] {
+        width: 350px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #bbb;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        margin-right: 15px;
+      }
+
+      form button {
+        height: 40px;
+        padding: 12px 25px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s;
+      }
+
+      form button:hover {
+        background-color: #0056b3;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 32px;
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+
+      
+    </style>
+  </head>
+  <body>
     <h1>Welcome to Material Scout</h1>
     <form action="{% url 'search_products' %}" method="get">
         <input type="text" name="query" placeholder="Search...">
@@ -11,3 +63,4 @@
     </form>
 </body>
 </html>
+
