@@ -27,14 +27,55 @@ def fetch_site(site, url):
     return []
 
 
+# def search_products(request):
+#     results = []
+#     if 'query' in request.GET:
+#         form = SearchForm(request.GET)
+#         if form.is_valid():
+#             query = form.cleaned_data['query']
+#             # По подразбиране сортиране по име възходящо
+#             sort_order = request.GET.get('sort', 'name_asc')
+#             search_type = request.GET.get('search_type', 'simple')
+#             print(search_type)
+#             urls = {
+#                 "toplivo": f"https://toplivo.bg/rezultati-ot-tarsene/{query}",
+#                 "abc": f"https://stroitelni-materiali.eu/search?query={query}",
+#                 "bricolage": f"https://mr-bricolage.bg/search-list?query={query}",
+#                 "masterhaus": f"https://www.masterhaus.bg/bg/search?q={query}",
+#                 "praktiker": f"https://praktiker.bg/bg/search/{query}",
+#             }
+
+#             # Използване на ThreadPoolExecutor за паралелни заявки
+#             with ThreadPoolExecutor() as executor:
+#                 futures = [executor.submit(fetch_site, site, url)
+#                            for site, url in urls.items()]
+
+#                 for future in futures:
+#                     try:
+#                         site_results = future.result()
+
+#                         # Филтриране на резултатите
+#                         filtered_results = filter_results_by_query(
+#                             site_results, query)
+
+#                         results.extend(filtered_results)
+#                     except Exception as e:
+#                         print(f"Error fetching results: {e}")
+
+#             # Сортиране на резултатите
+#             results = sort_results(results, sort_order)
+
+#     return render(request, 'material_scout/search_results.html', {'form': form, 'results': results, 'query': query})
+
 def search_products(request):
     results = []
     if 'query' in request.GET:
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
-            # По подразбиране сортиране по име възходящо
             sort_order = request.GET.get('sort', 'name_asc')
+            search_type = request.GET.get('search_type', 'simple')
+
             urls = {
                 "toplivo": f"https://toplivo.bg/rezultati-ot-tarsene/{query}",
                 "abc": f"https://stroitelni-materiali.eu/search?query={query}",
@@ -52,11 +93,12 @@ def search_products(request):
                     try:
                         site_results = future.result()
 
-                        # Филтриране на резултатите
-                        filtered_results = filter_results_by_query(
-                            site_results, query)
+                        # Ако е натиснат бутонът за стандартно търсене
+                        if search_type == 'simple':
+                            site_results = filter_results_by_query(site_results, query)
 
-                        results.extend(filtered_results)
+                        # Добавяне на резултатите към списъка с всички резултати
+                        results.extend(site_results)
                     except Exception as e:
                         print(f"Error fetching results: {e}")
 
@@ -64,6 +106,7 @@ def search_products(request):
             results = sort_results(results, sort_order)
 
     return render(request, 'material_scout/search_results.html', {'form': form, 'results': results, 'query': query})
+
 
 
 def filter_results_by_query(results, query):

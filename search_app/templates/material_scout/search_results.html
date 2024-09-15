@@ -124,7 +124,9 @@
   <body>
     <form method="GET" action="{% url 'search_products' %}">
       {{ form.as_p }}
-      <button type="submit">Търси</button>
+      {% comment %} <button type="submit">Търси</button> {% endcomment %}
+      <button type="submit" name="search_type" value="simple">Търсене</button>
+      <button type="submit" name="search_type" value="detailed">Подробно търсене</button>
     </form>
 
     <h1>Резултати от търсене: {{ query }}  </h1>
@@ -136,11 +138,6 @@
       <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
       <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
       <a href="?query={{ query }}&sort=price_desc">Сортирай по цена низходящо</a>
-
-      {% comment %} <label>
-        <input type="checkbox" name="exact_match" {% if exact_match %}checked{% endif %}>
-        Точно съвпадение
-      </label> {% endcomment %}
     </div>
 
     <table>
