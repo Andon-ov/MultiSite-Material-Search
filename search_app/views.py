@@ -27,46 +27,6 @@ def fetch_site(site, url):
     return []
 
 
-# def search_products(request):
-#     results = []
-#     if 'query' in request.GET:
-#         form = SearchForm(request.GET)
-#         if form.is_valid():
-#             query = form.cleaned_data['query']
-#             # По подразбиране сортиране по име възходящо
-#             sort_order = request.GET.get('sort', 'name_asc')
-#             search_type = request.GET.get('search_type', 'simple')
-#             print(search_type)
-#             urls = {
-#                 "toplivo": f"https://toplivo.bg/rezultati-ot-tarsene/{query}",
-#                 "abc": f"https://stroitelni-materiali.eu/search?query={query}",
-#                 "bricolage": f"https://mr-bricolage.bg/search-list?query={query}",
-#                 "masterhaus": f"https://www.masterhaus.bg/bg/search?q={query}",
-#                 "praktiker": f"https://praktiker.bg/bg/search/{query}",
-#             }
-
-#             # Използване на ThreadPoolExecutor за паралелни заявки
-#             with ThreadPoolExecutor() as executor:
-#                 futures = [executor.submit(fetch_site, site, url)
-#                            for site, url in urls.items()]
-
-#                 for future in futures:
-#                     try:
-#                         site_results = future.result()
-
-#                         # Филтриране на резултатите
-#                         filtered_results = filter_results_by_query(
-#                             site_results, query)
-
-#                         results.extend(filtered_results)
-#                     except Exception as e:
-#                         print(f"Error fetching results: {e}")
-
-#             # Сортиране на резултатите
-#             results = sort_results(results, sort_order)
-
-#     return render(request, 'material_scout/search_results.html', {'form': form, 'results': results, 'query': query})
-
 def search_products(request):
     results = []
     if 'query' in request.GET:
@@ -106,7 +66,6 @@ def search_products(request):
             results = sort_results(results, sort_order)
 
     return render(request, 'material_scout/search_results.html', {'form': form, 'results': results, 'query': query})
-
 
 
 def filter_results_by_query(results, query):
@@ -182,6 +141,8 @@ def process_toplivo(soup):
 
         link_tag = item.select_one('figure.img > a')
 
+        image_tag=item.select_one('img.produkt')
+
         price_tag = item.select_one('.cena .beforedot')
         promo_price_tag = item.select_one('.promocena > strong')
 
@@ -194,6 +155,8 @@ def process_toplivo(soup):
         link = link_tag['href'] if link_tag else '#'
 
         # Extract the texts for the different prices
+
+
         red_price = red_price_tag.get_text(
             strip=True) if red_price_tag else None
         new_price = new_price_tag.get_text(
@@ -202,6 +165,10 @@ def process_toplivo(soup):
             strip=True) if promo_price_tag else None
         valid_price = price_tag.get_text(strip=True) if price_tag else promo_price
 
+
+        image = image_tag['src'] if image_tag else None
+       
+
         if red_price or new_price or valid_price:
             valid_price = f"{valid_price} лв."
 
@@ -209,7 +176,7 @@ def process_toplivo(soup):
         price = valid_price or red_price or new_price or 'Няма цена'
 
         results.append({'title': title, 'price': price,
-                       'link': link, 'store_name': store_name})
+                       'link': link, 'store_name': store_name, image: 'image'})
 
     return results
 
@@ -223,6 +190,10 @@ def process_abc(soup):
         price_tag = item.select_one('._product-price .price')
         new_price_tag = item.select_one('._product-price-compare')
         old_price_tag = item.select_one('._product-price-old')
+        image_tag = item.select_one('img.lazyload-image.lazyload-square.lazy-loaded')
+
+        image = image_tag['src'] if image_tag else None
+        print(image)
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
@@ -232,7 +203,7 @@ def process_abc(soup):
         price = price.replace(',', '.')
 
         results.append({'title': title, 'price': price,
-                       'link': link, "store_name": store_name})
+                       'link': link, "store_name": store_name, image: 'image'})
     return results
 
 
