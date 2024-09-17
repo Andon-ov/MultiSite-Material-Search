@@ -181,29 +181,67 @@ def process_toplivo(soup):
     return results
 
 
+# def process_abc(soup):
+#     results = []
+#     store_name = "ABC"
+#     for item in soup.select('._product-info'):
+#         title_tag = item.select_one('._product-name-tag a')
+#         link_tag = item.select_one('._product-name-tag a')
+#         price_tag = item.select_one('._product-price .price')
+#         new_price_tag = item.select_one('._product-price-compare')
+#         old_price_tag = item.select_one('._product-price-old')
+#         image_tag = item.select_one('img.lazyload-image.lazyload-square.lazy-loaded')
+
+#         image = image_tag['src'] if image_tag else None
+#         print(image)
+
+#         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
+#         link = link_tag['href'] if link_tag else '#'
+#         new_price = new_price_tag.get_text(
+#             strip=True) if new_price_tag else 'Няма цена'
+#         price = price_tag.get_text(strip=True) if price_tag else new_price
+#         price = price.replace(',', '.')
+
+#         results.append({'title': title, 'price': price,
+#                        'link': link, "store_name": store_name, 'image': image})
+#     return results
+
+
 def process_abc(soup):
     results = []
     store_name = "ABC"
-    for item in soup.select('._product-info'):
-        title_tag = item.select_one('._product-name-tag a')
-        link_tag = item.select_one('._product-name-tag a')
-        price_tag = item.select_one('._product-price .price')
-        new_price_tag = item.select_one('._product-price-compare')
-        old_price_tag = item.select_one('._product-price-old')
-        image_tag = item.select_one('img.lazyload-image.lazyload-square.lazy-loaded')
+    
+    
+    for item in soup.select('._product'):
+        
+        image_tag = item.select_one('._product-image img')
+        
+        
+        image = image_tag.get('data-first-src') or image_tag.get('src') if image_tag else None
 
-        image = image_tag['src'] if image_tag else None
-        print(image)
+        
+        info_tag = item.select_one('._product-info')
+        title_tag = info_tag.select_one('._product-name-tag a') if info_tag else None
+        link_tag = info_tag.select_one('._product-name-tag a') if info_tag else None
+        price_tag = info_tag.select_one('._product-price .price') if info_tag else None
+        new_price_tag = info_tag.select_one('._product-price-compare') if info_tag else None
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
-        new_price = new_price_tag.get_text(
-            strip=True) if new_price_tag else 'Няма цена'
+        new_price = new_price_tag.get_text(strip=True) if new_price_tag else 'Няма цена'
         price = price_tag.get_text(strip=True) if price_tag else new_price
         price = price.replace(',', '.')
+        print(image)
 
-        results.append({'title': title, 'price': price,
-                       'link': link, "store_name": store_name, image: 'image'})
+        
+        results.append({
+            'title': title,
+            'price': price,
+            'link': link,
+            "store_name": store_name,
+            "image": image  
+        })
+
     return results
 
 
