@@ -55,7 +55,8 @@ def search_products(request):
 
                         # Ако е натиснат бутонът за стандартно търсене
                         if search_type == 'simple':
-                            site_results = filter_results_by_query(site_results, query)
+                            site_results = filter_results_by_query(
+                                site_results, query)
 
                         # Добавяне на резултатите към списъка с всички резултати
                         results.extend(site_results)
@@ -141,7 +142,7 @@ def process_toplivo(soup):
 
         link_tag = item.select_one('figure.img > a')
 
-        image_tag=item.select_one('img.produkt')
+        image_tag = item.select_one('img.produkt')
 
         price_tag = item.select_one('.cena .beforedot')
         promo_price_tag = item.select_one('.promocena > strong')
@@ -150,12 +151,10 @@ def process_toplivo(soup):
             ('div.productWapper1 > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)'))
         new_price_tag = item.select_one(
             ('div.productWapper1 > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > span:nth-child(1)'))
-        
 
         link = link_tag['href'] if link_tag else '#'
 
         # Extract the texts for the different prices
-
 
         red_price = red_price_tag.get_text(
             strip=True) if red_price_tag else None
@@ -163,11 +162,10 @@ def process_toplivo(soup):
             strip=True) if new_price_tag else None
         promo_price = promo_price_tag.get_text(
             strip=True) if promo_price_tag else None
-        valid_price = price_tag.get_text(strip=True) if price_tag else promo_price
-
+        valid_price = price_tag.get_text(
+            strip=True) if price_tag else promo_price
 
         image = image_tag['src'] if image_tag else None
-       
 
         if red_price or new_price or valid_price:
             valid_price = f"{valid_price} лв."
@@ -175,8 +173,12 @@ def process_toplivo(soup):
         # Price priority logic: checks valid_price first, then red_price, and finally new_price
         price = valid_price or red_price or new_price or 'Няма цена'
 
-        results.append({'title': title, 'price': price,
-                       'link': link, 'store_name': store_name, image: 'image'})
+        results.append({
+            'title': title,
+            'price': price,
+            'link': link,
+            'store_name': store_name,
+            'image': image})
 
     return results
 
@@ -210,36 +212,37 @@ def process_toplivo(soup):
 def process_abc(soup):
     results = []
     store_name = "ABC"
-    
-    
-    for item in soup.select('._product'):
-        
-        image_tag = item.select_one('._product-image img')
-        
-        
-        image = image_tag.get('data-first-src') or image_tag.get('src') if image_tag else None
 
-        
+    for item in soup.select('._product'):
+
+        image_tag = item.select_one('._product-image img')
+
+        image = image_tag.get(
+            'data-first-src') or image_tag.get('src') if image_tag else None
+
         info_tag = item.select_one('._product-info')
-        title_tag = info_tag.select_one('._product-name-tag a') if info_tag else None
-        link_tag = info_tag.select_one('._product-name-tag a') if info_tag else None
-        price_tag = info_tag.select_one('._product-price .price') if info_tag else None
-        new_price_tag = info_tag.select_one('._product-price-compare') if info_tag else None
+        title_tag = info_tag.select_one(
+            '._product-name-tag a') if info_tag else None
+        link_tag = info_tag.select_one(
+            '._product-name-tag a') if info_tag else None
+        price_tag = info_tag.select_one(
+            '._product-price .price') if info_tag else None
+        new_price_tag = info_tag.select_one(
+            '._product-price-compare') if info_tag else None
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
-        new_price = new_price_tag.get_text(strip=True) if new_price_tag else 'Няма цена'
+        new_price = new_price_tag.get_text(
+            strip=True) if new_price_tag else 'Няма цена'
         price = price_tag.get_text(strip=True) if price_tag else new_price
         price = price.replace(',', '.')
-        print(image)
 
-        
         results.append({
             'title': title,
             'price': price,
             'link': link,
             "store_name": store_name,
-            "image": image  
+            "image": image
         })
 
     return results
@@ -254,6 +257,9 @@ def process_bricolage(soup):
         first_price_tag = item.select_one('.product__price-value')
         second_price_tag = item.select_one('.fraction')
 
+        image_tag = item.select_one('.product__image img')
+        image = image_tag['src'] if image_tag else None
+
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
         link = f"https://mr-bricolage.bg{link}"
@@ -265,8 +271,15 @@ def process_bricolage(soup):
 
         price = f"{first_price}.{second_price} лв."
 
-        results.append({'title': title, 'price': price,
-                       'link': link, "store_name": store_name})
+        print(image)
+
+        results.append({
+            'title': title,
+            'price': price,
+            'link': link,
+            'image': image,
+            "store_name": store_name
+        })
     return results
 
 
