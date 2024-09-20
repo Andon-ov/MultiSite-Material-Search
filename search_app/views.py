@@ -271,8 +271,6 @@ def process_bricolage(soup):
 
         price = f"{first_price}.{second_price} лв."
 
-        print(image)
-
         results.append({
             'title': title,
             'price': price,
@@ -283,52 +281,106 @@ def process_bricolage(soup):
     return results
 
 
+# def process_masterhaus(soup):
+#     results = []
+#     store_name = "Masterhaus"
+#     for item in soup.select('ul.products > li'):
+#         title_tag = item.select_one('h2 a')
+#         link_tag = item.select_one('ul.products > li > div > a')
+#         price_tag = item.select_one('strong.price')
+
+#         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
+#         link = link_tag['href'] if link_tag else '#'
+#         link = f"https://www.masterhaus.bg{link}"
+
+#         if price_tag:
+#             # Checking if it's a promotional price
+#             if 'promo' in price_tag.get('class', []):
+#                 # Retrieve the old price
+#                 del_tag = price_tag.find('del')
+#                 if del_tag:
+#                     original_price_main = del_tag.select_one('span').get_text(strip=True) if del_tag.select_one(
+#                         'span') else ""
+#                     original_price_sup = del_tag.select_one('sup').get_text(strip=True) if del_tag.select_one(
+#                         'sup') else ""
+#                     original_price = f"{original_price_main}.{
+#                         original_price_sup} лв."
+
+#                 # Get the promotional price
+#                 promo_text_nodes = [node for node in price_tag.contents if isinstance(
+#                     node, str) and node.strip()]
+#                 promo_price_main = promo_text_nodes[0].strip(
+#                 ) if promo_text_nodes else ""
+#                 promo_price_sup = price_tag.find_all('sup')[1].get_text(strip=True) if len(
+#                     price_tag.find_all('sup')) > 1 else ""
+
+#                 price = f"{promo_price_main}.{promo_price_sup} лв."
+#             else:
+#                 # Derivation of the ordinary price
+#                 price_main = price_tag.contents[0].strip() if price_tag.contents and isinstance(price_tag.contents[0],
+#                                                                                                 str) else ""
+#                 price_sup = price_tag.find('sup').get_text(
+#                     strip=True) if price_tag.find('sup') else ""
+#                 price = f"{price_main}.{price_sup} лв."
+#         else:
+#             price = "Няма цена"
+
+#         results.append({'title': title, 'price': price,
+#                        'link': link, "store_name": store_name})
+#     return results
 def process_masterhaus(soup):
     results = []
     store_name = "Masterhaus"
+
+    # Избор на продуктите в списъка
     for item in soup.select('ul.products > li'):
         title_tag = item.select_one('h2 a')
         link_tag = item.select_one('ul.products > li > div > a')
         price_tag = item.select_one('strong.price')
 
+        # Намиране на изображението и вземане на атрибута src
+        image_tag = item.select_one('a img')
+        image = f"https://www.masterhaus.bg{image_tag['src']}" if image_tag else None
+        print(image)
+
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
         link = f"https://www.masterhaus.bg{link}"
 
+        # Извличане на цената
         if price_tag:
-            # Checking if it's a promotional price
+            # Проверка дали е промоционална цена
             if 'promo' in price_tag.get('class', []):
-                # Retrieve the old price
                 del_tag = price_tag.find('del')
                 if del_tag:
                     original_price_main = del_tag.select_one('span').get_text(strip=True) if del_tag.select_one(
                         'span') else ""
                     original_price_sup = del_tag.select_one('sup').get_text(strip=True) if del_tag.select_one(
                         'sup') else ""
-                    original_price = f"{original_price_main}.{
-                        original_price_sup} лв."
+                    original_price = f"{original_price_main}.{original_price_sup} лв."
 
-                # Get the promotional price
-                promo_text_nodes = [node for node in price_tag.contents if isinstance(
-                    node, str) and node.strip()]
-                promo_price_main = promo_text_nodes[0].strip(
-                ) if promo_text_nodes else ""
+                promo_text_nodes = [node for node in price_tag.contents if isinstance(node, str) and node.strip()]
+                promo_price_main = promo_text_nodes[0].strip() if promo_text_nodes else ""
                 promo_price_sup = price_tag.find_all('sup')[1].get_text(strip=True) if len(
                     price_tag.find_all('sup')) > 1 else ""
 
                 price = f"{promo_price_main}.{promo_price_sup} лв."
             else:
-                # Derivation of the ordinary price
-                price_main = price_tag.contents[0].strip() if price_tag.contents and isinstance(price_tag.contents[0],
-                                                                                                str) else ""
-                price_sup = price_tag.find('sup').get_text(
-                    strip=True) if price_tag.find('sup') else ""
+                price_main = price_tag.contents[0].strip() if price_tag.contents and isinstance(price_tag.contents[0], str) else ""
+                price_sup = price_tag.find('sup').get_text(strip=True) if price_tag.find('sup') else ""
                 price = f"{price_main}.{price_sup} лв."
         else:
             price = "Няма цена"
 
-        results.append({'title': title, 'price': price,
-                       'link': link, "store_name": store_name})
+        # Добавяне на резултатите, включително и изображението
+        results.append({
+            'title': title,
+            'price': price,
+            'link': link,
+            'image': image,  # Ново поле за изображението
+            'store_name': store_name
+        })
+
     return results
 
 
