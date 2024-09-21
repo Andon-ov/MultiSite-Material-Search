@@ -384,27 +384,64 @@ def process_masterhaus(soup):
     return results
 
 
+# def process_praktiker(soup):
+#     results = []
+#     store_name = "Praktiker"
+#     for item in soup.select('.product-grid-box.products-grid__item'):
+#         title_tag = item.select_one('.product-item__title a')
+#         link_tag = item.select_one('.product-item__title a')
+#         price_whole_tag = item.select_one('.price__value')
+#         price_fraction_tag = item.select_one('sup')
+
+#         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
+#         link = link_tag['href'] if link_tag else '#'
+#         if link:
+#             link = f"https://praktiker.bg/{link}"
+
+#         # Combine the whole number and pennies for the price
+#         price_whole = price_whole_tag.get_text(
+#             strip=True) if price_whole_tag else 'Няма цена'
+#         price_fraction = price_fraction_tag.get_text(
+#             strip=True) if price_fraction_tag else '00'
+#         price = f"{price_whole}.{price_fraction} лв.".replace(',', '.')
+
+#         results.append({'title': title, 'price': price,
+#                        'link': link, "store_name": store_name})
+#     return results
+
 def process_praktiker(soup):
     results = []
     store_name = "Praktiker"
+
+    # Избор на продуктите в списъка
     for item in soup.select('.product-grid-box.products-grid__item'):
         title_tag = item.select_one('.product-item__title a')
         link_tag = item.select_one('.product-item__title a')
         price_whole_tag = item.select_one('.price__value')
         price_fraction_tag = item.select_one('sup')
+        
+        # Намиране на изображението и вземане на атрибута src
+        image_tag = item.select_one('img')
+        image = image_tag['src'] if image_tag else None
+        print(image)
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
         if link:
             link = f"https://praktiker.bg/{link}"
 
-        # Combine the whole number and pennies for the price
-        price_whole = price_whole_tag.get_text(
-            strip=True) if price_whole_tag else 'Няма цена'
-        price_fraction = price_fraction_tag.get_text(
-            strip=True) if price_fraction_tag else '00'
+        # Комбиниране на цялата част и стотинките за цената
+        price_whole = price_whole_tag.get_text(strip=True) if price_whole_tag else 'Няма цена'
+        price_fraction = price_fraction_tag.get_text(strip=True) if price_fraction_tag else '00'
         price = f"{price_whole}.{price_fraction} лв.".replace(',', '.')
 
-        results.append({'title': title, 'price': price,
-                       'link': link, "store_name": store_name})
+        # Добавяне на резултатите, включително и изображението
+        results.append({
+            'title': title,
+            'price': price,
+            'link': link,
+            'image': image,  # Ново поле за изображението
+            'store_name': store_name
+        })
+
     return results
