@@ -341,7 +341,6 @@ def process_masterhaus(soup):
         # Намиране на изображението и вземане на атрибута src
         image_tag = item.select_one('a img')
         image = f"https://www.masterhaus.bg{image_tag['src']}" if image_tag else None
-        print(image)
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
@@ -423,7 +422,6 @@ def process_praktiker(soup):
         # Намиране на изображението и вземане на атрибута src
         image_tag = item.select_one('img')
         image = image_tag['src'] if image_tag else None
-        print(image)
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
