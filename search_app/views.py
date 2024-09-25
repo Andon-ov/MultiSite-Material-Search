@@ -5,10 +5,8 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import re
 
-
 def home(request):
     return render(request, 'material_scout/home.html')
-
 
 def fetch_site(site, url):
     response = requests.get(url)
@@ -25,48 +23,6 @@ def fetch_site(site, url):
         elif site == "praktiker":
             return process_praktiker(soup)
     return []
-
-
-# def search_products(request):
-#     results = []
-#     if 'query' in request.GET:
-#         form = SearchForm(request.GET)
-#         if form.is_valid():
-#             query = form.cleaned_data['query']
-#             sort_order = request.GET.get('sort', 'name_asc')
-#             search_type = request.GET.get('search_type', 'simple')
-
-#             urls = {
-#                 "toplivo": f"https://toplivo.bg/rezultati-ot-tarsene/{query}",
-#                 "abc": f"https://stroitelni-materiali.eu/search?query={query}",
-#                 "bricolage": f"https://mr-bricolage.bg/search-list?query={query}",
-#                 "masterhaus": f"https://www.masterhaus.bg/bg/search?q={query}",
-#                 "praktiker": f"https://praktiker.bg/bg/search/{query}",
-#             }
-
-#             # Използване на ThreadPoolExecutor за паралелни заявки
-#             with ThreadPoolExecutor() as executor:
-#                 futures = [executor.submit(fetch_site, site, url)
-#                            for site, url in urls.items()]
-
-#                 for future in futures:
-#                     try:
-#                         site_results = future.result()
-
-#                         # Ако е натиснат бутонът за стандартно търсене
-#                         if search_type == 'simple':
-#                             site_results = filter_results_by_query(
-#                                 site_results, query)
-
-#                         # Добавяне на резултатите към списъка с всички резултати
-#                         results.extend(site_results)
-#                     except Exception as e:
-#                         print(f"Error fetching results: {e}")
-
-#             # Сортиране на резултатите
-#             results = sort_results(results, sort_order)
-
-#     return render(request, 'material_scout/search_results.html', {'form': form, 'results': results, 'query': query})
 
 def search_products(request):
     results = []
@@ -116,7 +72,6 @@ def search_products(request):
 
     return render(request, 'material_scout/search_results.html', {'form': form, 'results': results, 'query': query})
 
-
 def filter_results_by_query(results, query):
     filtered_results = []
     # A regular expression to match the word query exactly
@@ -140,9 +95,6 @@ def sort_by_title_length(results):
     # Сортиране на резултатите по дължината на заглавието (по-малко думи най-отгоре)
     return sorted(results, key=title_length_sort_key)
 
-
-
-
 def sort_results(results, sort_order):
     if sort_order == 'price_asc':
         # Сортиране по цена във възходящ ред
@@ -158,7 +110,6 @@ def sort_results(results, sort_order):
         results.sort(key=lambda x: x['title'].lower(), reverse=True)
     return results
 
-
 def convert_price(price_str):
     # Премахва символа за валута и интервалите и конвертира в число
     clean_price = price_str.replace('лв.', '').strip()
@@ -166,7 +117,6 @@ def convert_price(price_str):
         return float(clean_price)
     except ValueError:
         return 0.0  # Ако има проблем с преобразуването, връща 0.0
-
 
 def process_toplivo(soup):
     results = []
@@ -241,33 +191,6 @@ def process_toplivo(soup):
 
     return results
 
-
-# def process_abc(soup):
-#     results = []
-#     store_name = "ABC"
-#     for item in soup.select('._product-info'):
-#         title_tag = item.select_one('._product-name-tag a')
-#         link_tag = item.select_one('._product-name-tag a')
-#         price_tag = item.select_one('._product-price .price')
-#         new_price_tag = item.select_one('._product-price-compare')
-#         old_price_tag = item.select_one('._product-price-old')
-#         image_tag = item.select_one('img.lazyload-image.lazyload-square.lazy-loaded')
-
-#         image = image_tag['src'] if image_tag else None
-#         print(image)
-
-#         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
-#         link = link_tag['href'] if link_tag else '#'
-#         new_price = new_price_tag.get_text(
-#             strip=True) if new_price_tag else 'Няма цена'
-#         price = price_tag.get_text(strip=True) if price_tag else new_price
-#         price = price.replace(',', '.')
-
-#         results.append({'title': title, 'price': price,
-#                        'link': link, "store_name": store_name, 'image': image})
-#     return results
-
-
 def process_abc(soup):
     results = []
     store_name = "ABC"
@@ -306,7 +229,6 @@ def process_abc(soup):
 
     return results
 
-
 def process_bricolage(soup):
     results = []
     store_name = "Mr.Bricolage"
@@ -339,54 +261,6 @@ def process_bricolage(soup):
         })
     return results
 
-
-# def process_masterhaus(soup):
-#     results = []
-#     store_name = "Masterhaus"
-#     for item in soup.select('ul.products > li'):
-#         title_tag = item.select_one('h2 a')
-#         link_tag = item.select_one('ul.products > li > div > a')
-#         price_tag = item.select_one('strong.price')
-
-#         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
-#         link = link_tag['href'] if link_tag else '#'
-#         link = f"https://www.masterhaus.bg{link}"
-
-#         if price_tag:
-#             # Checking if it's a promotional price
-#             if 'promo' in price_tag.get('class', []):
-#                 # Retrieve the old price
-#                 del_tag = price_tag.find('del')
-#                 if del_tag:
-#                     original_price_main = del_tag.select_one('span').get_text(strip=True) if del_tag.select_one(
-#                         'span') else ""
-#                     original_price_sup = del_tag.select_one('sup').get_text(strip=True) if del_tag.select_one(
-#                         'sup') else ""
-#                     original_price = f"{original_price_main}.{
-#                         original_price_sup} лв."
-
-#                 # Get the promotional price
-#                 promo_text_nodes = [node for node in price_tag.contents if isinstance(
-#                     node, str) and node.strip()]
-#                 promo_price_main = promo_text_nodes[0].strip(
-#                 ) if promo_text_nodes else ""
-#                 promo_price_sup = price_tag.find_all('sup')[1].get_text(strip=True) if len(
-#                     price_tag.find_all('sup')) > 1 else ""
-
-#                 price = f"{promo_price_main}.{promo_price_sup} лв."
-#             else:
-#                 # Derivation of the ordinary price
-#                 price_main = price_tag.contents[0].strip() if price_tag.contents and isinstance(price_tag.contents[0],
-#                                                                                                 str) else ""
-#                 price_sup = price_tag.find('sup').get_text(
-#                     strip=True) if price_tag.find('sup') else ""
-#                 price = f"{price_main}.{price_sup} лв."
-#         else:
-#             price = "Няма цена"
-
-#         results.append({'title': title, 'price': price,
-#                        'link': link, "store_name": store_name})
-#     return results
 def process_masterhaus(soup):
     results = []
     store_name = "Masterhaus"
@@ -446,32 +320,6 @@ def process_masterhaus(soup):
         })
 
     return results
-
-
-# def process_praktiker(soup):
-#     results = []
-#     store_name = "Praktiker"
-#     for item in soup.select('.product-grid-box.products-grid__item'):
-#         title_tag = item.select_one('.product-item__title a')
-#         link_tag = item.select_one('.product-item__title a')
-#         price_whole_tag = item.select_one('.price__value')
-#         price_fraction_tag = item.select_one('sup')
-
-#         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
-#         link = link_tag['href'] if link_tag else '#'
-#         if link:
-#             link = f"https://praktiker.bg/{link}"
-
-#         # Combine the whole number and pennies for the price
-#         price_whole = price_whole_tag.get_text(
-#             strip=True) if price_whole_tag else 'Няма цена'
-#         price_fraction = price_fraction_tag.get_text(
-#             strip=True) if price_fraction_tag else '00'
-#         price = f"{price_whole}.{price_fraction} лв.".replace(',', '.')
-
-#         results.append({'title': title, 'price': price,
-#                        'link': link, "store_name": store_name})
-#     return results
 
 def process_praktiker(soup):
     results = []
