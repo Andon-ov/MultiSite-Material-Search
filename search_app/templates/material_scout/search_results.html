@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="bg">
   <head>
     <meta charset="UTF-8" />
@@ -178,5 +178,192 @@
         {% endfor %}
       </tbody>
     </table>
+  </body>
+</html> {% endcomment %}
+
+
+<!DOCTYPE html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Търсене на продукти</title>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', sans-serif;
+        background-color: #f0f8ff;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      form {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      form input[type="text"] {
+        width: 300px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #bbb;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      form button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s;
+        font-size: 14px;
+      }
+
+      form button:hover {
+        background-color: #0056b3;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 24px;
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+
+      .sort-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .sort-buttons a {
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: background-color 0.3s;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .sort-buttons a:hover {
+        background-color: #0056b3;
+      }
+
+      .product-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      .product-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        max-width: 300px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .product-image {
+        width: 100%;
+        max-width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
+
+      .product-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #007bff;
+      }
+
+      .product-price {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .product-store {
+        font-size: 14px;
+        color: #555;
+      }
+
+      .no-results {
+        text-align: center;
+        font-weight: bold;
+        color: #ff0000;
+        font-size: 18px;
+      }
+
+      /* Медийни заявки за по-добра мобилна адаптация */
+      @media (max-width: 768px) {
+        form {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .sort-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .product-list {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .product-card {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form method="GET" action="{% url 'search_products' %}">
+      <input type="text" name="query" placeholder="Търсене на продукти..." required>
+      <button type="submit" name="search_type" value="simple">Търсене</button>
+      <button type="submit" name="search_type" value="detailed">Подробно търсене</button>
+    </form>
+
+    <h1>Резултати от търсене: {{ query }}</h1>
+    <h6>Намерени съвпадения: {{ results | length }}</h6>
+
+    <div class="sort-buttons">
+      <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>
+      <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
+      <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
+      <a href="?query={{ query }}&sort=price_desc">Сортирай по цена низходящо</a>
+    </div>
+
+    <div class="product-list">
+      {% for result in results %}
+      <a href="{{ result.link }}" target="_blank"> <div class="product-card">
+        {% if result.image %}
+        <img src="{{ result.image }}" alt="{{ result.title }}" class="product-image" />
+        {% else %}
+        <p>Няма снимка</p>
+        {% endif %}
+        <div class="product-title">{{ result.title }}</div>
+        <div class="product-price">{{ result.price }}</div>
+        <div class="product-store">{{ result.store_name }}</div>
+      </div></a>
+      {% empty %}
+      <p class="no-results">Няма намерени резултати.</p>
+      {% endfor %}
+    </div>
   </body>
 </html>
