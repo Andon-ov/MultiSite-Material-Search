@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="bg">
   <head>
     <meta charset="UTF-8" />
@@ -63,4 +63,131 @@
     </form>
 </body>
 </html>
+ {% endcomment %}
 
+
+ <!DOCTYPE html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Търсене на продукти</title>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', sans-serif;
+        background-color: #f0f8ff;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 36px;
+        color: #007bff;
+        margin-bottom: 10px;
+      }
+
+      p {
+        font-size: 18px;
+        color: #666;
+        margin: 0;
+      }
+
+      form {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        align-items: center;
+      }
+
+      form input[type="text"] {
+        width: 350px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #bbb;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        margin-right: 15px;
+        transition: all 0.3s ease;
+      }
+
+      form input[type="text"]:focus {
+        border-color: #007bff;
+        box-shadow: 0px 2px 8px rgba(0, 123, 255, 0.4);
+        outline: none;
+      }
+
+      form button {
+        height: 40px;
+        padding: 12px 25px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      form button:hover {
+        background-color: #0056b3;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .stores {
+        text-align: center;
+        margin-top: 40px;
+      }
+
+      .stores h2 {
+        font-size: 24px;
+        color: #007bff;
+        margin-bottom: 15px;
+      }
+
+      .stores ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .stores ul li {
+        font-size: 18px;
+        color: #333;
+        margin: 5px 0;
+      }
+
+      .stores ul li::before {
+        content: '•';
+        color: #007bff;
+        margin-right: 10px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Добре дошли в Material Scout</h1>
+      <p>Уеб приложение за търсене и агрегиране на строителни материали от различни онлайн магазини</p>
+    </header>
+
+    <form action="{% url 'search_products' %}" method="get">
+      <input type="text" name="query" placeholder="Търсете продукти...">
+      <button type="submit">Търсене</button>
+    </form>
+
+    <div class="stores">
+      <h2>Магазини:</h2>
+      <ul>
+        <li>Toplivo</li>
+        <li>ABC</li>
+        <li>Bricolage</li>
+        <li>Masterhaus</li>
+        <li>Praktiker</li>
+      </ul>
+    </div>
+  </body>
+</html>
