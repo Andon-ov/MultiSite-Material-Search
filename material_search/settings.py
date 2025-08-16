@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-2!#bo9tay=rj2+x^a!0p-f6_*trs@75m(7dp)sk+x@s_4&5n3@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["multi-site-material-search.onrender.com"]
+ALLOWED_HOSTS = ['multisite-material-search.onrender.com']
+
 
 
 # Application definition
