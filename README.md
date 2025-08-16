@@ -79,3 +79,25 @@ This project is licensed under the [MIT License.](https://en.wikipedia.org/wiki/
 
 ### 9. 🤝 Author 
 Built with ❤️ by Andon-ov
+
+### 10. 🧪 Testing the Application
+
+You can test the live version of the app here:
+
+🔗 [multisite-material-search.onrender.com](https://multisite-material-search.onrender.com)
+
+> ⚠️ Note: The app is hosted on [Render](https://render.com) using a free-tier test environment. Initial load times may be slightly slower due to cold starts. This setup is intended for demonstration and development purposes only.
+
+### What to try:
+- Enter a keyword in the search bar (e.g. "concrete", "steel")
+- Browse the results aggregated from multiple sources
+- Check that the links direct you to the correct external pages
+
+### Local Testing (optional):
+To run the app locally:
+
+```bash
+git clone https://github.com/Andon-ov/MultiSite-Material-Search.git
+cd MultiSite-Material-Search
+poetry install
+python manage.py runserver
