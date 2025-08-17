@@ -290,6 +290,7 @@
         margin-bottom: 10px;
         color: #007bff;
       }
+      
 
       .product-price {
         font-size: 16px;
@@ -358,7 +359,20 @@
         <p>Няма снимка</p>
         {% endif %}
         <div class="product-title">{{ result.title }}</div>
-        <div class="product-price">{{ result.price }}</div>
+        {% comment %} <div class="product-price">{{ result.price }}</div> {% endcomment %}
+        {% if result.old_price_bgn %}
+          <div class="badge-offer">Оферта</div>
+          <div class="product-price">
+            <span class="old-price"><s>{{ result.old_price_bgn }}</s></span> <br/>
+            <span class="new-price">{{ result.price_bgn }}</span>
+          </div>
+        {% else %}
+          <div class="product-price">{{ result.price_bgn }}</div>
+        {% endif %}
+
+        {% comment %} <div class="product-price">{{ result.price_bgn }}</div> {% endcomment %}
+        <div class="product-price">{{ result.price_eur }}</div>
+
         <div class="product-store">{{ result.store_name }}</div>
       </div></a>
       {% empty %}

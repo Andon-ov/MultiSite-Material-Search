@@ -22,6 +22,7 @@ def fetch_site(site, url):
             return process_masterhaus(soup)
         elif site == "praktiker":
             return process_praktiker(soup)
+
     return []
 
 def search_products(request):
@@ -321,40 +322,102 @@ def process_masterhaus(soup):
 
     return results
 
+# def process_praktiker(soup):
+#     results = []
+#     store_name = "Praktiker"
+
+#     # Избор на продуктите в списъка
+#     for item in soup.select('.product-grid-box.products-grid__item'):
+#         title_tag = item.select_one('.product-item__title a')
+#         link_tag = item.select_one('.product-item__title a')
+#         price_whole_tag = item.select_one('.price__value')
+#         price_fraction_tag = item.select_one('sup')
+
+#         # Намиране на изображението и вземане на атрибута src
+#         image_tag = item.select_one('img')
+#         image = image_tag['src'] if image_tag else None
+
+#         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
+#         link = link_tag['href'] if link_tag else '#'
+#         if link:
+#             link = f"https://praktiker.bg/{link}"
+
+#         # Комбиниране на цялата част и стотинките за цената
+#         price_whole = price_whole_tag.get_text(
+#             strip=True) if price_whole_tag else 'Няма цена'
+#         price_fraction = price_fraction_tag.get_text(
+#             strip=True) if price_fraction_tag else '00'
+#         price = f"{price_whole}.{price_fraction} лв.".replace(',', '.')
+
+#         # Добавяне на резултатите, включително и изображението
+#         results.append({
+#             'title': title,
+#             'price': price,
+#             'link': link,
+#             'image': image,  # Ново поле за изображението
+#             'store_name': store_name
+#         })
+
+#     return results
 def process_praktiker(soup):
     results = []
+    price_dict = {}
     store_name = "Praktiker"
 
-    # Избор на продуктите в списъка
     for item in soup.select('.product-grid-box.products-grid__item'):
+
+        price_dict = extract_prices(item)
+        print(price_dict)
+        old_price_bgn = price_dict.get('old_price_bgn')
+        price_bgn = price_dict['price_bgn']
+        price_eur = price_dict['price_eur']
+
         title_tag = item.select_one('.product-item__title a')
         link_tag = item.select_one('.product-item__title a')
-        price_whole_tag = item.select_one('.price__value')
-        price_fraction_tag = item.select_one('sup')
-
-        # Намиране на изображението и вземане на атрибута src
-        image_tag = item.select_one('img')
-        image = image_tag['src'] if image_tag else None
+        image_tag = item.select_one('.product-item__picture img')
+        price_tags = item.select('.product-price__value')
 
         title = title_tag.get_text(strip=True) if title_tag else 'Без заглавие'
         link = link_tag['href'] if link_tag else '#'
         if link:
             link = f"https://praktiker.bg/{link}"
 
-        # Комбиниране на цялата част и стотинките за цената
-        price_whole = price_whole_tag.get_text(
-            strip=True) if price_whole_tag else 'Няма цена'
-        price_fraction = price_fraction_tag.get_text(
-            strip=True) if price_fraction_tag else '00'
-        price = f"{price_whole}.{price_fraction} лв.".replace(',', '.')
+        image = image_tag['src'] if image_tag else None
 
-        # Добавяне на резултатите, включително и изображението
+        # # Очакваме първата цена да е в лева, втората в евро
+        # price_bgn = price_tags[0].get_text(strip=True) + " лв." if len(price_tags) > 0 else 'Няма цена'
+        # price_eur = price_tags[1].get_text(strip=True) + " €" if len(price_tags) > 1 else None
+
         results.append({
             'title': title,
-            'price': price,
+            'old_price_bgn':old_price_bgn,
+            'price_bgn': price_bgn,
+            'price_eur': price_eur,
             'link': link,
-            'image': image,  # Ново поле за изображението
+            'image': image,
             'store_name': store_name
         })
 
     return results
+
+
+
+def extract_prices(item):
+    print(item)
+    old_price_tag = item.select_one('.product-price--old .product-price__value')
+    new_price_tags = item.select('.product-price:not(.product-price--old) .product-price__value')
+
+    if old_price_tag and len(new_price_tags) >= 2:
+        return {
+            'old_price_bgn': old_price_tag.get_text(strip=True) + " лв.",
+            'price_bgn': new_price_tags[0].get_text(strip=True) + " лв.",
+            'price_eur': new_price_tags[1].get_text(strip=True) + " €"
+        }
+    else:
+        # Стандартен продукт
+        price_tags = item.select('.product-price__value')
+        return {
+            'old_price_bgn': None,
+            'price_bgn': price_tags[0].get_text(strip=True) + " лв." if len(price_tags) > 0 else None,
+            'price_eur': price_tags[1].get_text(strip=True) + " €" if len(price_tags) > 1 else None
+        }
