@@ -6,7 +6,7 @@
     <title>Търсене на продукти</title>
     <style>
       body {
-        font-family: 'Helvetica Neue', sans-serif;
+        font-family: "Helvetica Neue", sans-serif;
         background-color: #f0f8ff;
         margin: 0;
         padding: 20px;
@@ -134,7 +134,9 @@
     <form method="GET" action="{% url 'search_products' %}">
       {{ form.as_p }}
       <button type="submit" name="search_type" value="simple">Търсене</button>
-      <button type="submit" name="search_type" value="detailed">Подробно търсене</button>
+      <button type="submit" name="search_type" value="detailed">
+        Подробно търсене
+      </button>
     </form>
 
     <h1>Резултати от търсене: {{ query }}</h1>
@@ -145,7 +147,9 @@
       <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>
       <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
       <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
-      <a href="?query={{ query }}&sort=price_desc">Сортирай по цена низходящо</a>
+      <a href="?query={{ query }}&sort=price_desc"
+        >Сортирай по цена низходящо</a
+      >
     </div>
 
     <table>
@@ -160,13 +164,19 @@
       <tbody>
         {% for result in results %}
         <tr>
-          <td><a href="{{ result.link }}" target="_blank">{{ result.title | upper }}</a></td>
+          <td>
+            <a href="{{ result.link }}" target="_blank"
+              >{{ result.title | upper }}</a
+            >
+          </td>
           <td>
             {% if result.image %}
-            <img src="{{ result.image }}" alt="{{ result.title }}" class="product-image" />
-            {% else %}
-            Няма снимка
-            {% endif %}
+            <img
+              src="{{ result.image }}"
+              alt="{{ result.title }}"
+              class="product-image"
+            />
+            {% else %} Няма снимка {% endif %}
           </td>
           <td>{{ result.price }}</td>
           <td>{{ result.store_name }}</td>
@@ -179,8 +189,8 @@
       </tbody>
     </table>
   </body>
-</html> {% endcomment %}
-
+</html>
+{% endcomment %}
 
 <!DOCTYPE html>
 <html lang="bg">
@@ -190,7 +200,7 @@
     <title>Търсене на продукти</title>
     <style>
       body {
-        font-family: 'Helvetica Neue', sans-serif;
+        font-family: "Helvetica Neue", sans-serif;
         background-color: #f0f8ff;
         margin: 0;
         padding: 20px;
@@ -290,7 +300,6 @@
         margin-bottom: 10px;
         color: #007bff;
       }
-      
 
       .product-price {
         font-size: 16px;
@@ -335,46 +344,63 @@
   </head>
   <body>
     <form method="GET" action="{% url 'search_products' %}">
-      <input type="text" name="query" placeholder="Търсене на продукти..." required>
+      <input
+        type="text"
+        name="query"
+        placeholder="Търсене на продукти..."
+        required
+      />
       <button type="submit" name="search_type" value="simple">Търсене</button>
-      <button type="submit" name="search_type" value="detailed">Подробно търсене</button>
+      <button type="submit" name="search_type" value="detailed">
+        Подробно търсене
+      </button>
     </form>
 
     <h1>Резултати от търсене: {{ query }}</h1>
     <h6>Намерени съвпадения: {{ results | length }}</h6>
-
+    
     <div class="sort-buttons">
       <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>
       <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
       <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
-      <a href="?query={{ query }}&sort=price_desc">Сортирай по цена низходящо</a>
+      <a href="?query={{ query }}&sort=price_desc"
+        >Сортирай по цена низходящо</a
+      >
     </div>
 
     <div class="product-list">
       {% for result in results %}
-      <a href="{{ result.link }}" target="_blank"> <div class="product-card">
-        {% if result.image %}
-        <img src="{{ result.image }}" alt="{{ result.title }}" class="product-image" />
-        {% else %}
-        <p>Няма снимка</p>
-        {% endif %}
-        <div class="product-title">{{ result.title }}</div>
-        {% comment %} <div class="product-price">{{ result.price }}</div> {% endcomment %}
-        {% if result.old_price_bgn %}
+      <a href="{{ result.link }}" target="_blank">
+        <div class="product-card">
+          {% if result.image %}
+          <img
+            src="{{ result.image }}"
+            alt="{{ result.title }}"
+            class="product-image"
+          />
+          {% else %}
+          <p>Няма снимка</p>
+          {% endif %}
+          <div class="product-title">{{ result.title }}</div>
+          {% comment %}
+          <div class="product-price">{{ result.price }}</div>
+          {% endcomment %} {% if result.old_price_bgn %}
           <div class="badge-offer">Оферта</div>
           <div class="product-price">
-            <span class="old-price"><s>{{ result.old_price_bgn }}</s></span> <br/>
+            <span class="old-price"><s>{{ result.old_price_bgn }}</s></span>
+            <br />
             <span class="new-price">{{ result.price_bgn }}</span>
           </div>
-        {% else %}
+          {% else %}
           <div class="product-price">{{ result.price_bgn }}</div>
-        {% endif %}
+          {% endif %} {% comment %}
+          <div class="product-price">{{ result.price_bgn }}</div>
+          {% endcomment %}
+          <div class="product-price">{{ result.price_eur }}</div>
 
-        {% comment %} <div class="product-price">{{ result.price_bgn }}</div> {% endcomment %}
-        <div class="product-price">{{ result.price_eur }}</div>
-
-        <div class="product-store">{{ result.store_name }}</div>
-      </div></a>
+          <div class="product-store">{{ result.store_name }}</div>
+        </div></a
+      >
       {% empty %}
       <p class="no-results">Няма намерени резултати.</p>
       {% endfor %}
