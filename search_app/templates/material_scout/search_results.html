@@ -1,409 +1,629 @@
 {% comment %} <!DOCTYPE html>
 <html lang="bg">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Търсене на продукти</title>
     <style>
-      body {
-        font-family: "Helvetica Neue", sans-serif;
-        background-color: #f0f8ff;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-      }
+        body {
+          font-family: "Helvetica Neue", sans-serif;
+          background-color: #f0f8ff;
+          margin: 0;
+          padding: 20px;
+          color: #333;
+        }
 
-      form {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 30px;
-        align-items: center;
-      }
-
-      form input[type="text"] {
-        width: 350px;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #bbb;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        margin-right: 15px;
-      }
-
-      form button {
-        height: 40px;
-        padding: 12px 25px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s;
-      }
-
-      form button:hover {
-        background-color: #0056b3;
-      }
-
-      h1 {
-        text-align: center;
-        font-size: 32px;
-        color: #007bff;
-        margin-bottom: 20px;
-      }
-
-      .sort-buttons {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      .sort-buttons a {
-        margin-right: 15px;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: bold;
-        transition: background-color 0.3s;
-      }
-
-      .sort-buttons a:hover {
-        background-color: #0056b3;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      table thead {
-        background-color: #007bff;
-        color: white;
-      }
-
-      table th,
-      table td {
-        padding: 14px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-      }
-
-      table th {
-        text-align: center;
-      }
-
-      table tbody tr:nth-child(even) {
-        background-color: #f7f7f7;
-      }
-
-      table tbody tr:hover {
-        background-color: #e9ecef;
-      }
-
-      .no-results {
-        text-align: center;
-        font-weight: bold;
-        color: #ff0000;
-        font-size: 18px;
-      }
-
-      a {
-        color: #007bff;
-        text-decoration: none;
-        font-weight: bold;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      /* Стилове за изображенията */
-      .product-image {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 8px;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-      }
-    </style>
-  </head>
-  <body>
-    <form method="GET" action="{% url 'search_products' %}">
-      {{ form.as_p }}
-      <button type="submit" name="search_type" value="simple">Търсене</button>
-      <button type="submit" name="search_type" value="detailed">
-        Подробно търсене
-      </button>
-    </form>
-
-    <h1>Резултати от търсене: {{ query }}</h1>
-    <br />
-    <h6>Намерени съвпадения {{ results | length }}</h6>
-
-    <div class="sort-buttons">
-      <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>
-      <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
-      <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
-      <a href="?query={{ query }}&sort=price_desc"
-        >Сортирай по цена низходящо</a
-      >
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Снимка</th>
-          <th>Заглавие</th>
-          <th>Цена</th>
-          <th>Магазин</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for result in results %}
-        <tr>
-          <td>
-            <a href="{{ result.link }}" target="_blank"
-              >{{ result.title | upper }}</a
-            >
-          </td>
-          <td>
-            {% if result.image %}
-            <img
-              src="{{ result.image }}"
-              alt="{{ result.title }}"
-              class="product-image"
-            />
-            {% else %} Няма снимка {% endif %}
-          </td>
-          <td>{{ result.price }}</td>
-          <td>{{ result.store_name }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5" class="no-results">Няма намерени резултати.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
-{% endcomment %}
-
-<!DOCTYPE html>
-<html lang="bg">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Търсене на продукти</title>
-    <style>
-      body {
-        font-family: "Helvetica Neue", sans-serif;
-        background-color: #f0f8ff;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-      }
-
-      form {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      form input[type="text"] {
-        width: 300px;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #bbb;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      form button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s;
-        font-size: 14px;
-      }
-
-      form button:hover {
-        background-color: #0056b3;
-      }
-
-      h1 {
-        text-align: center;
-        font-size: 24px;
-        color: #007bff;
-        margin-bottom: 20px;
-      }
-
-      .sort-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-      }
-
-      .sort-buttons a {
-        padding: 8px 16px;
-        background-color: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-size: 14px;
-        transition: background-color 0.3s;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .sort-buttons a:hover {
-        background-color: #0056b3;
-      }
-
-      .product-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-      }
-
-      .product-card {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-        max-width: 300px;
-        width: 100%;
-        text-align: center;
-      }
-
-      .product-image {
-        width: 100%;
-        max-width: 150px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-bottom: 15px;
-      }
-
-      .product-title {
-        font-size: 18px;
-        margin-bottom: 10px;
-        color: #007bff;
-      }
-
-      .product-price {
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-
-      .product-store {
-        font-size: 14px;
-        color: #555;
-      }
-
-      .no-results {
-        text-align: center;
-        font-weight: bold;
-        color: #ff0000;
-        font-size: 18px;
-      }
-
-      /* Медийни заявки за по-добра мобилна адаптация */
-      @media (max-width: 768px) {
         form {
-          flex-direction: column;
+          display: flex;
+          justify-content: center;
+          margin-bottom: 30px;
           align-items: center;
+        }
+
+        form input[type="text"] {
+          width: 350px;
+          padding: 12px;
+          border-radius: 8px;
+          border: 1px solid #bbb;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          margin-right: 15px;
+        }
+
+        form button {
+          height: 40px;
+          padding: 12px 25px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+          transition: background-color 0.3s;
+        }
+
+        form button:hover {
+          background-color: #0056b3;
+        }
+
+        h1 {
+          text-align: center;
+          font-size: 32px;
+          color: #007bff;
+          margin-bottom: 20px;
         }
 
         .sort-buttons {
-          flex-direction: column;
-          align-items: center;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+
+        .sort-buttons a {
+          margin-right: 15px;
+          padding: 10px 20px;
+          background-color: #007bff;
+          color: white;
+          text-decoration: none;
+          border-radius: 8px;
+          font-weight: bold;
+          transition: background-color 0.3s;
+        }
+
+        .sort-buttons a:hover {
+          background-color: #0056b3;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+          box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        table thead {
+          background-color: #007bff;
+          color: white;
+        }
+
+        table th,
+        table td {
+          padding: 14px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+          text-align: center;
+        }
+
+        table tbody tr:nth-child(even) {
+          background-color: #f7f7f7;
+        }
+
+        table tbody tr:hover {
+          background-color: #e9ecef;
+        }
+
+        .no-results {
+          text-align: center;
+          font-weight: bold;
+          color: #ff0000;
+          font-size: 18px;
+        }
+
+        a {
+          color: #007bff;
+          text-decoration: none;
+          font-weight: bold;
+        }
+
+        a:hover {
+          text-decoration: underline;
+        }
+
+        /* Стилове за изображенията */
+        .product-image {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 8px;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+<form method="GET" action="{% url 'search_products' %}">
+    {{ form.as_p }}
+    <button type="submit" name="search_type" value="simple">Търсене</button>
+    <button type="submit" name="search_type" value="detailed">
+        Подробно търсене
+    </button>
+</form>
+
+<h1>Резултати от търсене: {{ query }}</h1>
+<br/>
+<h6>Намерени съвпадения {{ results | length }}</h6>
+
+<div class="sort-buttons">
+    <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>
+    <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
+    <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
+    <a href="?query={{ query }}&sort=price_desc"
+    >Сортирай по цена низходящо</a
+    >
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Снимка</th>
+        <th>Заглавие</th>
+        <th>Цена</th>
+        <th>Магазин</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for result in results %}
+    <tr>
+        <td>
+            <a href="{{ result.link }}" target="_blank"
+            >{{ result.title | upper }}</a
+            >
+        </td>
+        <td>
+            {% if result.image %}
+            <img
+                    src="{{ result.image }}"
+                    alt="{{ result.title }}"
+                    class="product-image"
+            />
+            {% else %} Няма снимка {% endif %}
+        </td>
+        <td>{{ result.price }}</td>
+        <td>{{ result.store_name }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5" class="no-results">Няма намерени резултати.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
+{% endcomment %}
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="bg">-->
+<!--  <head>-->
+<!--    <meta charset="UTF-8" />-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0" />-->
+<!--    <title>Търсене на продукти</title>-->
+<!--    <style>-->
+<!--      body {-->
+<!--        font-family: "Helvetica Neue", sans-serif;-->
+<!--        background-color: #f0f8ff;-->
+<!--        margin: 0;-->
+<!--        padding: 20px;-->
+<!--        color: #333;-->
+<!--      }-->
+
+<!--      form {-->
+<!--        display: flex;-->
+<!--        justify-content: center;-->
+<!--        margin-bottom: 30px;-->
+<!--        flex-wrap: wrap;-->
+<!--        gap: 10px;-->
+<!--      }-->
+
+<!--      form input[type="text"] {-->
+<!--        width: 300px;-->
+<!--        padding: 10px;-->
+<!--        border-radius: 8px;-->
+<!--        border: 1px solid #bbb;-->
+<!--        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);-->
+<!--      }-->
+
+<!--      form button {-->
+<!--        padding: 10px 20px;-->
+<!--        background-color: #007bff;-->
+<!--        color: white;-->
+<!--        border: none;-->
+<!--        border-radius: 8px;-->
+<!--        cursor: pointer;-->
+<!--        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);-->
+<!--        transition: background-color 0.3s;-->
+<!--        font-size: 14px;-->
+<!--      }-->
+
+<!--      form button:hover {-->
+<!--        background-color: #0056b3;-->
+<!--      }-->
+
+<!--      h1 {-->
+<!--        text-align: center;-->
+<!--        font-size: 24px;-->
+<!--        color: #007bff;-->
+<!--        margin-bottom: 20px;-->
+<!--      }-->
+
+<!--      .sort-buttons {-->
+<!--        display: flex;-->
+<!--        justify-content: center;-->
+<!--        gap: 10px;-->
+<!--        flex-wrap: wrap;-->
+<!--        margin-bottom: 20px;-->
+<!--      }-->
+
+<!--      .sort-buttons a {-->
+<!--        padding: 8px 16px;-->
+<!--        background-color: #007bff;-->
+<!--        color: white;-->
+<!--        text-decoration: none;-->
+<!--        border-radius: 8px;-->
+<!--        font-size: 14px;-->
+<!--        transition: background-color 0.3s;-->
+<!--        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);-->
+<!--      }-->
+
+<!--      .sort-buttons a:hover {-->
+<!--        background-color: #0056b3;-->
+<!--      }-->
+
+<!--      .product-list {-->
+<!--        display: flex;-->
+<!--        flex-wrap: wrap;-->
+<!--        gap: 20px;-->
+<!--        justify-content: center;-->
+<!--      }-->
+
+<!--      .product-card {-->
+<!--        background-color: #fff;-->
+<!--        border-radius: 8px;-->
+<!--        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);-->
+<!--        padding: 15px;-->
+<!--        max-width: 300px;-->
+<!--        width: 100%;-->
+<!--        text-align: center;-->
+<!--      }-->
+
+<!--      .product-image {-->
+<!--        width: 100%;-->
+<!--        max-width: 150px;-->
+<!--        height: 150px;-->
+<!--        object-fit: cover;-->
+<!--        border-radius: 8px;-->
+<!--        margin-bottom: 15px;-->
+<!--      }-->
+
+<!--      .product-title {-->
+<!--        font-size: 18px;-->
+<!--        margin-bottom: 10px;-->
+<!--        color: #007bff;-->
+<!--      }-->
+
+<!--      .product-price {-->
+<!--        font-size: 16px;-->
+<!--        font-weight: bold;-->
+<!--        margin-bottom: 10px;-->
+<!--      }-->
+
+<!--      .product-store {-->
+<!--        font-size: 14px;-->
+<!--        color: #555;-->
+<!--      }-->
+
+<!--      .no-results {-->
+<!--        text-align: center;-->
+<!--        font-weight: bold;-->
+<!--        color: #ff0000;-->
+<!--        font-size: 18px;-->
+<!--      }-->
+
+<!--      /* Медийни заявки за по-добра мобилна адаптация */-->
+<!--      @media (max-width: 768px) {-->
+<!--        form {-->
+<!--          flex-direction: column;-->
+<!--          align-items: center;-->
+<!--        }-->
+
+<!--        .sort-buttons {-->
+<!--          flex-direction: column;-->
+<!--          align-items: center;-->
+<!--        }-->
+
+<!--        .product-list {-->
+<!--          flex-direction: column;-->
+<!--          align-items: center;-->
+<!--        }-->
+
+<!--        .product-card {-->
+<!--          max-width: 100%;-->
+<!--        }-->
+<!--      }-->
+<!--    </style>-->
+<!--  </head>-->
+<!--  <body>-->
+<!--    <form method="GET" action="{% url 'search_products' %}">-->
+<!--      <input-->
+<!--        type="text"-->
+<!--        name="query"-->
+<!--        placeholder="Търсене на продукти..."-->
+<!--        required-->
+<!--      />-->
+<!--      <button type="submit" name="search_type" value="simple">Търсене</button>-->
+<!--      <button type="submit" name="search_type" value="detailed">-->
+<!--        Подробно търсене-->
+<!--      </button>-->
+<!--    </form>-->
+
+<!--    <h1>Резултати от търсене: {{ query }}</h1>-->
+<!--    <h6>Намерени съвпадения: {{ results | length }}</h6>-->
+<!--    -->
+<!--    <div class="sort-buttons">-->
+<!--      <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>-->
+<!--      <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>-->
+<!--      <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>-->
+<!--      <a href="?query={{ query }}&sort=price_desc"-->
+<!--        >Сортирай по цена низходящо</a-->
+<!--      >-->
+<!--    </div>-->
+
+<!--    <div class="product-list">-->
+<!--      {% for result in results %}-->
+<!--      <a href="{{ result.link }}" target="_blank">-->
+<!--        <div class="product-card">-->
+<!--          {% if result.image %}-->
+<!--          <img-->
+<!--            src="{{ result.image }}"-->
+<!--            alt="{{ result.title }}"-->
+<!--            class="product-image"-->
+<!--          />-->
+<!--          {% else %}-->
+<!--          <p>Няма снимка</p>-->
+<!--          {% endif %}-->
+<!--          <div class="product-title">{{ result.title }}</div>-->
+<!--          {% comment %}-->
+<!--          <div class="product-price">{{ result.price }}</div>-->
+<!--          {% endcomment %} {% if result.old_price_bgn %}-->
+<!--          <div class="badge-offer">Оферта</div>-->
+<!--          <div class="product-price">-->
+<!--            <span class="old-price"><s>{{ result.old_price_bgn }}</s></span>-->
+<!--            <br />-->
+<!--            <span class="new-price">{{ result.price_bgn }}</span>-->
+<!--          </div>-->
+<!--          {% else %}-->
+<!--          <div class="product-price">{{ result.price_bgn }}</div>-->
+<!--          {% endif %} {% comment %}-->
+<!--          <div class="product-price">{{ result.price_bgn }}</div>-->
+<!--          {% endcomment %}-->
+<!--          <div class="product-price">{{ result.price_eur }}</div>-->
+
+<!--          <div class="product-store">{{ result.store_name }}</div>-->
+<!--        </div></a-->
+<!--      >-->
+<!--      {% empty %}-->
+<!--      <p class="no-results">Няма намерени резултати.</p>-->
+<!--      {% endfor %}-->
+<!--    </div>-->
+<!--  </body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Каталог продукти</title>
+    <style>
+        body {
+          font-family: "Helvetica Neue", sans-serif;
+          background-color: #fff;
+          margin: 0;
+          padding: 40px 10%;
+          color: #333;
+        }
+
+        h1 {
+          font-size: 28px;
+          margin-bottom: 5px;
+        }
+        a {
+        text-decoration: none;
+        }
+
+        .subtitle {
+          color: #666;
+          margin-bottom: 20px;
+        }
+
+        form {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+        }
+
+        form input[type="text"] {
+          flex: 1;
+          min-width: 250px;
+          padding: 10px;
+          border-radius: 8px;
+          border: 1px solid #ddd;
+        }
+
+        form button {
+          padding: 10px 20px;
+          border: white;
+          color: black;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        form button:hover {
+          background: #007bff;
+          color: white;
+          border-color:#007bff;
+
+        }
+
+        .sort-buttons {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-bottom: 20px;
+        }
+
+        .sort-buttons a {
+          padding: 8px 16px;
+          background: #f5f5f5;
+          color: #333;
+          text-decoration: none;
+          border-radius: 8px;
+          font-size: 14px;
+          border: 1px solid #ddd;
+          transition: all 0.3s;
+        }
+
+        .sort-buttons a:hover {
+          background: #007bff;
+          color: white;
+          border-color: #007bff;
         }
 
         .product-list {
-          flex-direction: column;
-          align-items: center;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 20px;
         }
 
         .product-card {
-          max-width: 100%;
+          background: #fff;
+          border: 1px solid #eee;
+          border-radius: 12px;
+          overflow: hidden;
+          transition: transform 0.2s, box-shadow 0.2s;
+          display: flex;
+          flex-direction: column;
         }
-      }
+
+        .product-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          background: #f3f3f3;
+        }
+
+        .product-content {
+          flex: 1; /* да заеме цялата височина */
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between; /* разделя на горна и долна част */
+          padding: 15px;
+        }
+
+        .title-area {
+          min-height: 75px; /* фиксирана височина за равни карти */
+          display: flex;
+          align-items: flex-start;
+        }
+
+        .product-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #111; /* черно */
+          line-height: 1.3em;
+        }
+
+        .bottom-area {
+          margin-top: auto;
+        }
+
+        .product-price {
+          font-size: 16px;
+          font-weight: bold;
+          color: black;
+          margin: 10px 0 5px;
+        }
+
+        .product-price-eur {
+          font-size: 14px;
+          color: #555;
+          margin-bottom: 8px;
+        }
+
+
+        .product-store {
+          display: inline-block;
+          padding: 3px 8px;
+          font-size: 12px;
+          background: #f0f2f5;
+          border-radius: 6px;
+          margin-top: 5px;
+          color: #555;
+        }
+
+
+        .no-results {
+          text-align: center;
+          font-weight: bold;
+          color: #ff0000;
+          font-size: 18px;
+        }
     </style>
-  </head>
-  <body>
-    <form method="GET" action="{% url 'search_products' %}">
-      <input
-        type="text"
-        name="query"
-        placeholder="Търсене на продукти..."
-        required
-      />
-      <button type="submit" name="search_type" value="simple">Търсене</button>
-      <button type="submit" name="search_type" value="detailed">
+</head>
+<body>
+<h1>Резултати от търсене: {{ query }}</h1>
+<p class="subtitle">Следните резултати ({{ results|length }}) отговарят на вашето търсене.</p>
+
+<form method="GET" action="{% url 'search_products' %}">
+    <input type="text" name="query" placeholder="Търсене на продукти..." required/>
+    <button type="submit">Търси</button>
+    <button type="submit" name="search_type" value="detailed">
         Подробно търсене
-      </button>
-    </form>
+    </button>
+</form>
+<div class="sort-buttons">
+    <a href="?query={{ query }}&sort=name_asc">Име ↑</a>
+    <a href="?query={{ query }}&sort=name_desc">Име ↓</a>
+    <a href="?query={{ query }}&sort=price_asc">Цена ↑</a>
+    <a href="?query={{ query }}&sort=price_desc">Цена ↓</a>
+</div>
 
-    <h1>Резултати от търсене: {{ query }}</h1>
-    <h6>Намерени съвпадения: {{ results | length }}</h6>
-    
-    <div class="sort-buttons">
-      <a href="?query={{ query }}&sort=name_asc">Сортирай по име възходящо</a>
-      <a href="?query={{ query }}&sort=name_desc">Сортирай по име низходящо</a>
-      <a href="?query={{ query }}&sort=price_asc">Сортирай по цена възходящо</a>
-      <a href="?query={{ query }}&sort=price_desc"
-        >Сортирай по цена низходящо</a
-      >
-    </div>
+<p><i>За допълнителна информация, изберете желания продукт и ще бъдете пренасочени към страницата му.</i></p>
 
-    <div class="product-list">
-      {% for result in results %}
-      <a href="{{ result.link }}" target="_blank">
+
+<div class="product-list">
+    {% for result in results %}
+    <a href="{{ result.link }}" target="_blank">
+
         <div class="product-card">
-          {% if result.image %}
-          <img
-            src="{{ result.image }}"
-            alt="{{ result.title }}"
-            class="product-image"
-          />
-          {% else %}
-          <p>Няма снимка</p>
-          {% endif %}
-          <div class="product-title">{{ result.title }}</div>
-          {% comment %}
-          <div class="product-price">{{ result.price }}</div>
-          {% endcomment %} {% if result.old_price_bgn %}
-          <div class="badge-offer">Оферта</div>
-          <div class="product-price">
-            <span class="old-price"><s>{{ result.old_price_bgn }}</s></span>
-            <br />
-            <span class="new-price">{{ result.price_bgn }}</span>
-          </div>
-          {% else %}
-          <div class="product-price">{{ result.price_bgn }}</div>
-          {% endif %} {% comment %}
-          <div class="product-price">{{ result.price_bgn }}</div>
-          {% endcomment %}
-          <div class="product-price">{{ result.price_eur }}</div>
+            {% if result.image %}
+            <img src="{{ result.image }}" alt="{{ result.title }}" class="product-image"/>
+            {% else %}
+            <div class="product-image"></div>
+            {% endif %}
 
-          <div class="product-store">{{ result.store_name }}</div>
-        </div></a
-      >
-      {% empty %}
-      <p class="no-results">Няма намерени резултати.</p>
-      {% endfor %}
-    </div>
-  </body>
+            <div class="product-content">
+                <div class="title-area">
+                    <div class="product-title">{{ result.title | lower |capfirst }}</div>
+                </div>
+                <div class="bottom-area">
+                    <div class="product-price">{{ result.price_bgn }}</div>
+                    <div class="product-price-eur">{{ result.price_eur }}</div>
+                    <div class="product-store">{{ result.store_name }}</div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-results">Няма намерени резултати.</p>
+        {% endfor %}
+    </a>
+</div>
+</body>
 </html>
+
