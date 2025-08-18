@@ -47,7 +47,6 @@ def search_products(request):
             with ThreadPoolExecutor() as executor:
                 futures = []
                 for site, url in urls.items():
-                    print(f"[DEBUG] Submitting site='{site}' with url='{url}'")
                     future = executor.submit(fetch_site, site, url)
                     futures.append(future)
 
@@ -73,6 +72,7 @@ def search_products(request):
 
 
 def filter_results_by_query(results, query):
+    # print(f'[DEBUG]{results}')
     filtered_results = []
     # A regular expression to match the word query exactly
     query_pattern = re.compile(rf'\b{re.escape(query)}\b', re.IGNORECASE)
@@ -101,10 +101,10 @@ def sort_by_title_length(results):
 def sort_results(results, sort_order):
     if sort_order == 'price_asc':
         # Сортиране по цена във възходящ ред
-        results.sort(key=lambda x: convert_price(x['price']))
+        results.sort(key=lambda x: convert_price(x['price_bgn']))
     elif sort_order == 'price_desc':
         # Сортиране по цена в низходящ ред
-        results.sort(key=lambda x: convert_price(x['price']), reverse=True)
+        results.sort(key=lambda x: convert_price(x['price_bgn']), reverse=True)
     elif sort_order == 'name_asc':
         # Сортиране по име във възходящ ред
         results.sort(key=lambda x: x['title'].lower())
@@ -152,6 +152,7 @@ def process_toplivo(soup):
             '.euroPrices .cena .beforedot')
         price_eur = euro_tag.get_text(strip=True) + " €" if euro_tag else None
 
+        print(f'[DEBUG] bgn: {price_bgn}, eur: {price_eur}')
         # Линк и изображение
         link_tag = item.select_one('figure.img a')
         link = link_tag['href'] if link_tag else '#'
